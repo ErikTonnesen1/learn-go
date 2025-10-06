@@ -15,7 +15,7 @@ var names = [4]string{
 	"Ringo",
 }
 
-func arrays_and_slices() {
+func main() {
 	var a [2]string
 	a[0] = "hello"
 	a[1] = "world"
@@ -28,6 +28,21 @@ func arrays_and_slices() {
 	getSlice(primes)
 	fmt.Println("Doing Slice operations: ")
 	sliceOperations()
+
+	fmt.Println("\nDoing Slice literal stuff")
+	sliceLiteral()
+
+	fmt.Println("\nDoing Slice literal stuff")
+	sliceDefaults()
+
+	fmt.Println("\nDoing Slice length and capacity stuff:")
+	sliceLengthAndCapacity()
+
+	fmt.Println("\nDoing Nil Slice stuff")
+	nilSlice()
+
+	fmt.Println("\nMaking Slices with the make method")
+	makeSlices()
 }
 
 //Slices
@@ -68,3 +83,139 @@ func sliceOperations() {
 
 // Slice literals
 // like an array literal without the length
+
+//Array Literal
+//Example: [3]bool{true, true, false}
+
+//Slice literal
+//this creates the same array as above then builds a slice that references it
+//[]bool{true, true, false}
+
+func sliceLiteral() {
+	q := []int{2, 3, 5, 7, 11, 13}
+	fmt.Println(q)
+
+	r := []bool{true, false, true, true, false, true}
+	fmt.Println(r)
+
+	s := []struct {
+		i int
+		b bool
+	}{ //slice literal is of type struct that is defined inline
+		{2, true},
+		{3, false},
+		{5, true},
+		{7, true},
+		{11, false},
+		{13, true},
+	}
+
+	fmt.Println(s)
+}
+
+// Slice defaults
+//instead of including the lower and upper bounds in a slice definition, you can omit these and it will
+//use their default values:
+//	- lower bound = 0
+//	- upper boud = length of slice
+
+//for the array
+// var a [10]int
+// these slices are equivalent:
+
+// a[0:10]
+// a[:10]
+// a[0:]
+// a[:]
+
+func sliceDefaults() {
+	s := []int{2, 3, 5, 7, 11, 13}
+	s = s[1:4] //[3, 5, 7]
+	fmt.Println(s)
+
+	s = s[:2] //slice of the slice [3, 5]
+	fmt.Println(s)
+
+	s = s[1:] //slice of the sliced slice: [5]
+	fmt.Println(s)
+
+}
+
+//Slice length and capacity
+// A slice has both a length and a capacity
+// - length: # of elements it contains
+// - capacity: number of elems in the underlying array,
+//		*counting from first element in the slice*
+
+// length and capacity of the slice can be obtained from the following methods
+// - len(s) -> length
+// - cap(s) -> capacity
+
+//**You can extend a slice's length by re-slicing it, given it has capacity
+//In the following method, we'll try and extend the length beyond capacity
+//and see what happens
+
+func sliceLengthAndCapacity() {
+	s := []int{2, 3, 5, 7, 11, 13}
+	printSlice(s)
+
+	//slice the slice to give it length 0
+	s = s[:0]
+	printSlice(s)
+
+	//extending length
+	s = s[:4]
+	printSlice(s)
+
+	//Drop first two values
+	s = s[2:]
+	printSlice(s)
+}
+
+func printSlice(slice []int) {
+	fmt.Printf("len=%d, cap=%d, %v\n", len(slice), cap(slice), slice)
+}
+
+//nil slices
+// the zero value of a slice is *nil*
+// a nil slice has length and capacity = 0 and no underlying array
+
+func nilSlice() {
+	var s []int
+	printSlice(s)
+	if s == nil {
+		fmt.Println("nil!")
+	}
+}
+
+// Creating Slices with 'make' a.k.a ~dynamically~ sized arrays
+
+// - 'make' allocates a zeroed array and returns a slice that refers to that
+//	array
+
+// a := make([]int, 5) // len(a) = 5
+
+// to specify a capacity, pass a 3rd arg
+
+// b := make([]int, 0, 5) // len(b) = 0, cap(b) = 5
+
+// b = b[:cap(b)] // len(b)=5, cap(b)=5
+// b = b[1:] //len(b)=4, cap(b)=4,
+
+func makeSlices() {
+	a := make([]int, 5)
+	printMakeSlices("a", a) // len=5, cap=5
+
+	b := make([]int, 0, 5)
+	printMakeSlices("b", b) // len=0, cap=5
+
+	c := b[:2]
+	printMakeSlices("c", c) //len=2 cap=5
+
+	d := c[2:5]
+	printMakeSlices("d", d) //len=3, cap=3
+}
+
+func printMakeSlices(s string, x []int) {
+	fmt.Printf("%s, len=%d, cap=%d %v\n", s, len(x), cap(x), x)
+}
