@@ -4,20 +4,20 @@ package main
 
 import "fmt"
 
-type Vertex struct {
+type vertex struct {
 	X int
 	Y int
 }
 
 func structs() {
-	vert := Vertex{1, 2}
+	vert := vertex{1, 2}
 	p := &vert
 	getXFromStruct(vert)
 	getXFromPointer(p)
 	structLiterals()
 }
 
-func getXFromStruct(vert Vertex) {
+func getXFromStruct(vert vertex) {
 	vert.X = 4 //struct fields are accessed using a dot (struct.field)
 	fmt.Printf("Directly retireved from struct: %d\n", vert.X)
 }
@@ -26,7 +26,7 @@ func getXFromStruct(vert Vertex) {
 //to access a field X of a struct when we have a struct pointer, we can write (*p.X) but it is a bit
 //cumbersome, so the language allows us to just use p.X and implicitly adds the *
 
-func getXFromPointer(p *Vertex) {
+func getXFromPointer(p *vertex) {
 	fmt.Printf("X retrieved from a pointer: %d\n", p.X)
 }
 
@@ -35,10 +35,10 @@ func getXFromPointer(p *Vertex) {
 
 func structLiterals() {
 	var (
-		v1 = Vertex{1, 2}  //has type Vertex
-		v2 = Vertex{X: 1}  // Y:0 is implicit
-		v3 = Vertex{}      // has X:0 and Y:0
-		p  = &Vertex{1, 2} //has type *Vertex
+		v1 = vertex{1, 2}  //has type Vertex
+		v2 = vertex{X: 1}  // Y:0 is implicit
+		v3 = vertex{}      // has X:0 and Y:0
+		p  = &vertex{1, 2} //has type *Vertex
 	)
 	fmt.Printf("Regular Vertex: %v\n Pointer: %d\n Other Vertex: %v\n Final vertex: %v\n", v1, p, v2, v3)
 

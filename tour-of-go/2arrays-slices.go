@@ -6,7 +6,10 @@ package main
 // var a [10]int denotes a as an int array of size 10
 //** an array's length is apart of its type ~ so they cannot be resized **
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 var names = [4]string{
 	"John",
@@ -15,7 +18,7 @@ var names = [4]string{
 	"Ringo",
 }
 
-func main() {
+func slices_and_arrays() {
 	var a [2]string
 	a[0] = "hello"
 	a[1] = "world"
@@ -43,6 +46,12 @@ func main() {
 
 	fmt.Println("\nMaking Slices with the make method")
 	makeSlices()
+
+	fmt.Println("\nDoing slices containing slices stuff")
+	sliceOfSlices()
+
+	fmt.Println("\nDoing Appending slices stuff")
+	appendSlice()
 }
 
 //Slices
@@ -218,4 +227,49 @@ func makeSlices() {
 
 func printMakeSlices(s string, x []int) {
 	fmt.Printf("%s, len=%d, cap=%d %v\n", s, len(x), cap(x), x)
+}
+
+//Slices can contain any type, including other slices
+
+func sliceOfSlices() {
+	board := [][]string{
+		[]string{"_", "_", "_"},
+		[]string{"_", "_", "_"},
+		[]string{"_", "_", "_"},
+	}
+	board[0][0] = "X"
+	board[2][0] = "O"
+	board[0][1] = "X"
+	board[2][2] = "O"
+	board[1][0] = "X"
+	board[2][2] = "O"
+
+	for i := 0; i < len(board); i++ {
+		fmt.Println(strings.Join(board[i], " "))
+	}
+}
+
+// Appending slices
+//you can append items to a slice via the following method from Go's 'builtin' standard libary
+//func append(slice []T, ... T)
+// - first param is a slice
+// - second param(s) are the items to append to the slice
+
+// append checks to see if the underlying array of the slice has capacity to add to it, if not, a new underlying array is allocated, and a new pointer to the new array is returned by append
+
+func appendSlice() {
+	var s []int //nil slice
+	printSlice(s)
+
+	//append works on nil slices
+	s = append(s, 0)
+	printSlice(s)
+
+	//slice continues to grow
+	s = append(s, 1)
+	printSlice(s)
+
+	// can append mulitple items at once
+	s = append(s, 2, 3, 4, 5)
+	printSlice(s)
 }
