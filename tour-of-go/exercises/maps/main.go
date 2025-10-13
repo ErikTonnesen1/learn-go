@@ -11,10 +11,10 @@ import "strings"
 // "golang.org/x/tour/wc"
 
 func WordCount(s string) map[string]int {
-	var fields = strings.Fields(s)
+	var fields []string = strings.Fields(s)
 	wordMap := make(map[string]int)
 	for _, v := range fields {
-		if _, ok := wordMap[v]; ok {
+		if _, ok := wordMap[v]; ok { //wordMap[v] returns two values! _ = value, and ok = boolean if v is present
 			wordMap[v] = wordMap[v] + 1
 		} else {
 			wordMap[v] = 1

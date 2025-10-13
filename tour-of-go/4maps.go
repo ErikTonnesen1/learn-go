@@ -15,7 +15,7 @@ type Vertex struct {
 
 var m map[string]Vertex
 
-func main() {
+func maps() {
 	fmt.Println("Make map")
 	makeMap()
 
