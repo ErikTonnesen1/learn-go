@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt",
+	"internal/godebug"
 	"strings"
 )
 
@@ -31,12 +31,33 @@ import (
 //[2,4]
 
 func convert(s string, numRows int) (finalAnswer string) {
-	var wordArray []string = s.Split()
-	for i := range wordArray {
-		for i := 0 i < numnumRows; i++ {
+	if numRows == 1 {
+		return s
+	}
 
+	//initial state
+	rows := make([]string, numRows)
+	currRow := 0
+	goingDown := true
+
+	for _, v := range s {
+		//action
+		rows[currRow] += string(v)
+
+		//state logic
+		if currRow == 0 || currRow == numRows-1 {
+			goingDown = !goingDown
+		}
+
+		//update state
+		if goingDown {
+			currRow++
+		} else {
+			currRow--
 		}
 	}
+
+	//create answer
 
 	return finalAnswer
 }
