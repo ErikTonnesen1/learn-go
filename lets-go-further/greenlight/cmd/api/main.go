@@ -26,7 +26,7 @@ func main() {
 	var cfg config
 
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
-	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
+	flag.StringVar(&cfg.env, "env", "development", "Environment (dev|stg|prod)")
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -37,7 +37,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("v1/healthcheck", app.healthCheckHandler)
+	mux.HandleFunc("/v1/healthcheck", app.healthCheckHandler)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),
