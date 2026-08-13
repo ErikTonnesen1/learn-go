@@ -9,6 +9,7 @@ import (
 type Runtime int
 
 // implement MarshalJSON so that is satisfies the json.Marshaler interface. Should return the JSON-encoded value for the movie runtime
+// Purposefully using value receiver instead of pointer receiver, because a value receiver applies to both values & pointers, whereas pointer receivers work only on pointers
 func (r Runtime) MarshalJSON() ([]byte, error) {
 	//Generate string of the runtime postfixed with mins
 	jsonValue := fmt.Sprintf("%d mins", r)
