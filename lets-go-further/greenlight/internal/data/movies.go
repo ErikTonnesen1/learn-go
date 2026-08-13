@@ -1,8 +1,8 @@
 package data
 
 import (
-	"encoding/json"
-	"fmt"
+	// "encoding/json" //Used in the examples past the struct
+	// "fmt"
 	"time"
 )
 
@@ -54,9 +54,58 @@ func (m Movie) MarshalJSON() ([]byte, error) {
 */
 
 /*
-
 Although you could say that the above code is verbose and repetitive, therefore you could also Embed and alias
+*/
 
+// type Movie struct {
+// 	ID        int       `json:"id"`
+// 	CreatedAt time.Time `json:"-"`
+// 	Title     string    `json:"title"`
+// 	Year      int       `json:"year,omitzero"`
+// 	Runtime   Runtime   `json:"-"` // For this impl, we're voiding the runtime field to -- to never output in the json encoding so that we can use it in the alias further down
+// 	Genres    []string  `json:"genres,omitempty"`
+// 	Version   int       `json:"version"`
+// }
+//
+// func (m Movie) MarshalJSON() ([]byte, error) {
+// 	var runtime string
+//
+// 	if m.Runtime != 0 {
+// 		runtime = fmt.Sprintf("%d mins", m.Runtime)
+// 	}
+//
+// 	//Alias that has the underlying type of Movie
+// 	//Due to the way GO handles type definitions, the alias will have all the same fields. But importantly, none of the methods defined on Movie
+// 	type MovieAlias Movie
+//
+// 	//Embed a MovieAlias in the temp struct along with a Runtime field that has the type string and the necessary struct tags
+// 	//Important to embed the alias instead of the movie struct so that we don't inherit the MarhsalJSON method that's defined on the Movie struct ~ would cause a infinite loop during encoding
+// 	aux := struct {
+// 		MovieAlias
+// 		Runtime string `json:"runtime,omitzero"`
+// 	}{
+// 		MovieAlias: MovieAlias(m),
+// 		Runtime:    runtime,
+// 	}
+//
+// 	return json.Marshal(aux)
+// }
 
+/*
+Will result in the following output
+
+{
+	"movie": {
+		"id": 123,
+		"title": "Casablanca",
+		"genres": [
+			"drama",
+			"romance",
+			"war"
+		],
+		"version": 1,
+		"runtime": "102 mins"
+	}
+}
 
 */
