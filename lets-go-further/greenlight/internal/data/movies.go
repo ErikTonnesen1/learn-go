@@ -3,6 +3,7 @@ package data
 import (
 	// "encoding/json" //Used in the examples past the struct
 	// "fmt"
+	"github.com/ErikTonnesen1/greenlight/internal/data/validator"
 	"time"
 )
 
@@ -16,6 +17,27 @@ type Movie struct {
 	Runtime   Runtime   `json:"runtime,omitzero"` //if not wanting to change key name but keep omitzero, can do ",omitzero" -- must keep trailing comma
 	Genres    []string  `json:"genres,omitempty"` //Using `omitempty` to omit empty slices/arrays
 	Version   int       `json:"version"`
+}
+
+func ValidateMove(v *validator.Validator, movie Movie) {
+
+	//Use Check() to execute validation check
+	v.Check(movie.Title != "", "title", "must be provided")
+	v.Check(len(movie.Title) <= 500, "title", "must not be more than 500 bytes long")
+
+	v.Check(movie.Year != 0, "year", "must be provided")
+	v.Check(movie.Year >= 1888, "year", "must be greater than 1888")
+	v.Check(movie.Year <= time.Now().Year(), "year", "must not be in the future")
+
+	v.Check(movie.Runtime != 0, "runtime", "must be provided")
+	v.Check(movie.Runtime > 0, "runtime", "must be a positive integer")
+
+	v.Check(movie.Genres != nil, "genres", "must be provided")
+	v.Check(len(movie.Genres) >= 1, "genres", "must contain at least 1 genre")
+	v.Check(len(movie.Genres) <= 5, "genres", "must not contain more than 5 genres")
+
+	//Using the Unique helper to check that all values in the movie.Genres slice are unique
+	v.Check(validator.Unique(movie.Genres), "genres", "must not contain duplicate values")
 }
 
 /*

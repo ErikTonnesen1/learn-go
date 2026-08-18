@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/ErikTonnesen1/greenlight/internal/data"
+	"github.com/ErikTonnesen1/greenlight/internal/data/validator"
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +24,22 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 	err := app.readJSON(w, r, &input)
 	if err != nil {
 		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	//Copy the values from the input struct to a new Movie struct
+	movie := data.Movie{
+		Title:   input.Title,
+		Year:    input.Year,
+		Runtime: input.Runtime,
+		Genres:  input.Genres,
+	}
+
+	v := validator.New()
+
+	//Use the Valid() method to see if any of the checks failed. If so, use failedValidateResponse() helper to send a response to the client
+	if data.ValidateMove(v, movie); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
