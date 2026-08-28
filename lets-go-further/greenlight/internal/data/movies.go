@@ -4,7 +4,9 @@ import (
 	// "encoding/json" //Used in the examples past the struct
 	// "fmt"
 	"database/sql"
+	"errors"
 	"github.com/ErikTonnesen1/greenlight/internal/data/validator"
+	"github.com/lib/pq"
 	"time"
 )
 
@@ -46,22 +48,62 @@ type MovieModel struct {
 }
 
 func (m MovieModel) Insert(movie Movie) (Movie, error) {
-	return nil
+	query := `
+	INSERT INTO movies (title, year, runtime, genres)
+	VALUES ($1, $2, $3, $4)
+	RETURNING id, created_at, version`
+
+	args := []any{movie.Title, movie.Year, movie.Runtime, pq.Array(movie.Genres)}
+
+	err := m.DB.QueryRow(query, args...).Scan(&movie.ID, &movie.CreatedAt, &movie.Version)
+
+	return movie, err
 }
 
 func (m MovieModel) Get(id int) (Movie, error) {
-	return nil, nil
+
+	if id < 1 {
+		return Movie{}, ErrRecordNotFound
+	}
+
+	query := `
+	SELECT id, created_at, title, year, runtime, genres, version
+	FROM movies 
+	WHERE id = $1`
+
+	movie := Movie{}
+
+	err := m.DB.QueryRow(query, id).Scan(
+		&movie.ID,
+		&movie.CreatedAt,
+		&movie.Title,
+		&movie.Year,
+		&movie.Runtime,
+		pq.Array(&movie.Genres),
+		&movie.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return Movie{}, ErrRecordNotFound
+		default:
+			return Movie{}, err
+		}
+	}
+
+	return movie, nil
 }
 
-func (m MovieModel) Update(movie Movie) (Movie, error) {
-
-	return nil, nil
-}
-
-func (m MovieModel) Delete(id int) error {
-	return nil
-}
-
+//
+// func (m MovieModel) Update(movie Movie) (Movie, error) {
+//
+// 	return nil, nil
+// }
+//
+// func (m MovieModel) Delete(id int) error {
+// 	return nil
+// }
+//
 /*
 Alternative to using a custom Runtime type, with a MarshalJSON() method, we could just write a MarshalJSON() method for our movie struct
 */
