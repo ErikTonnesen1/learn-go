@@ -3,6 +3,7 @@ package data
 import (
 	// "encoding/json" //Used in the examples past the struct
 	// "fmt"
+	"database/sql"
 	"github.com/ErikTonnesen1/greenlight/internal/data/validator"
 	"time"
 )
@@ -40,11 +41,29 @@ func ValidateMove(v *validator.Validator, movie Movie) {
 	v.Check(validator.Unique(movie.Genres), "genres", "must not contain duplicate values")
 }
 
+type MovieModel struct {
+	DB *sql.DB
+}
+
+func (m MovieModel) Insert(movie Movie) (Movie, error) {
+	return nil
+}
+
+func (m MovieModel) Get(id int) (Movie, error) {
+	return nil, nil
+}
+
+func (m MovieModel) Update(movie Movie) (Movie, error) {
+
+	return nil, nil
+}
+
+func (m MovieModel) Delete(id int) error {
+	return nil
+}
+
 /*
-
-
 Alternative to using a custom Runtime type, with a MarshalJSON() method, we could just write a MarshalJSON() method for our movie struct
-
 */
 
 /*

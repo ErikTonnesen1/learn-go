@@ -5,11 +5,13 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	_ "github.com/lib/pq"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/ErikTonnesen1/greenlight/internal/data"
+	_ "github.com/lib/pq"
 )
 
 var version string = "1.0.0"
@@ -28,6 +30,7 @@ type config struct {
 type application struct {
 	config config
 	logger *slog.Logger
+	models data.Models
 }
 
 func main() {
@@ -58,6 +61,7 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
+		models: data.NewModels(db),
 	}
 
 	srv := &http.Server{
