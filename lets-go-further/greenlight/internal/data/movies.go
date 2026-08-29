@@ -116,11 +116,33 @@ func (m MovieModel) Update(movie Movie) (Movie, error) {
 
 }
 
-//
-// func (m MovieModel) Delete(id int) error {
-// 	return nil
-// }
-//
+func (m MovieModel) Delete(id int) error {
+
+	if id < 1 {
+		return ErrRecordNotFound
+	}
+
+	query := `
+	DELETE FROM movies
+	WHERE id = $1
+	`
+
+	result, err := m.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+	return nil
+}
+
 /*
 Alternative to using a custom Runtime type, with a MarshalJSON() method, we could just write a MarshalJSON() method for our movie struct
 */
